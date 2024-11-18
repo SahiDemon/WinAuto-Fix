@@ -166,7 +166,7 @@ function Remove-TemporaryFiles {
     Update-Status -Task "Temporary File Cleanup" -Result "Started"  # Set status to Started
     Show-Progress -Activity "Removing Temporary Files" -Percentage 70
     
-    Get-ChildItem -Path $env:TEMP -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue
+    Get-ChildItem -Path $env:TEMP -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
     Update-Status -Task "Temporary File Cleanup" -Result "Success"
 }
 
@@ -198,6 +198,7 @@ function Show-Report {
         Show-TaskStatusWithIcon -Task $_ -Result $status[$_]
     }
     Write-Host "==========================================" -ForegroundColor Cyan
+    Invoke-Sound
 }
 
 # Run Tasks
