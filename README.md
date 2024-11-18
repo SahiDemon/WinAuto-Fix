@@ -21,5 +21,5 @@ The **Windows Autofix Script v4.1** is a PowerShell-based utility designed to au
    - Open PowerShell as Administrator.
    - Run the script by entering the following command:
      ```
-     iwr -useb https://raw.githubusercontent.com/SahiDemon/WinAuto-Fix/refs/heads/main/winautofix.ps1 | iex
+     iwr -useb https://raw.githubusercontent.com/SahiDemon/WinAuto-Fix/main/winautofix.ps1 | iex
      ```
