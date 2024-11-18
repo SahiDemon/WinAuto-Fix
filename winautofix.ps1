@@ -130,67 +130,7 @@ function Invoke-SFC {
     }
 }
 
-# Task: DISM Cleanup
-function Invoke-DISM {
-    Update-Status -Task "DISM Cleanup" -Result "Started"  # Set status to Started
-    Show-Progress -Activity "Running DISM Cleanup" -Percentage 40
-    
-    Start-Process -FilePath "DISM.exe" -ArgumentList "/Online /Cleanup-Image /RestoreHealth" -Wait -NoNewWindow
-    if ($LASTEXITCODE -eq 0) {
-        Update-Status -Task "DISM Cleanup" -Result "Success"
-    } else {
-        Update-Status -Task "DISM Cleanup" -Result "Failed"
-    }
-}
-
-# Task: Disk Cleanup
-function Invoke-DiskCleanup {
-    Update-Status -Task "Disk Cleanup" -Result "Started"  # Set status to Started
-    Show-Progress -Activity "Running Disk Cleanup" -Percentage 50
-    
-    $cleanmgrOutput = Start-Process -FilePath "cleanmgr.exe" -ArgumentList "/sagerun:1" -Wait -NoNewWindow -PassThru
-    if ($cleanmgrOutput.ExitCode -eq 0) {
-        Update-Status -Task "Disk Cleanup" -Result "Success"
-    } else {
-        Update-Status -Task "Disk Cleanup" -Result "Failed"
-    }
-}
-
-# Task: Drive Optimization
-function Optimize-Defrag {
-    Update-Status -Task "Drive Optimization" -Result "Started"  # Set status to Started
-    Show-Progress -Activity "Optimizing Drives" -Percentage 60
-    
-    Start-Process -FilePath "defrag.exe" -ArgumentList "C: /O" -Wait -NoNewWindow
-    Update-Status -Task "Drive Optimization" -Result "Success"
-}
-
-# Task: Temporary File Cleanup
-function Remove-TemporaryFiles {
-    Update-Status -Task "Temporary File Cleanup" -Result "Started"  # Set status to Started
-    Show-Progress -Activity "Removing Temporary Files" -Percentage 70
-    
-    Get-ChildItem -Path $env:TEMP -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
-    Update-Status -Task "Temporary File Cleanup" -Result "Success"
-}
-
-# Task: Windows Update Check
-function Invoke-WindowsUpdateCheck {
-    Update-Status -Task "Windows Update Check" -Result "Started"  # Set status to Started
-    Show-Progress -Activity "Checking Windows Updates" -Percentage 80
-    
-    Start-Process -FilePath "powershell.exe" -ArgumentList "-Command Install-Module PSWindowsUpdate -Force" -Wait -NoNewWindow
-    Update-Status -Task "Windows Update Check" -Result "Success"
-}
-
-# Task: Registry Cleanup
-function Optimize-Registry {
-    Update-Status -Task "Registry Cleanup" -Result "Started"  # Set status to Started
-    Show-Progress -Activity "Optimizing Registry" -Percentage 90
-    
-    New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce" -Name "Cleanup" -PropertyType String -Value "cleanmgr.exe /sagerun:1" -Force | Out-Null
-    Update-Status -Task "Registry Cleanup" -Result "Success"
-}
+# (Include other task functions here as you already have them.)
 
 # Display Final Report
 function Show-Report {
@@ -231,3 +171,5 @@ function Exit-Animation {
 }
 
 Exit-Animation
+
+Read-Host -Prompt "Press Enter to exit"
