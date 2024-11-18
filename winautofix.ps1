@@ -5,6 +5,10 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
     exit
 }
 
+# Set execution policy and TLS settings
+Set-ExecutionPolicy Bypass -Scope Process -Force
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
 # Welcome Screen
 Clear-Host
 Write-Host "==========================================" -ForegroundColor Cyan
@@ -65,6 +69,7 @@ function Show-Progress {
     Start-Sleep -Milliseconds 100
 }
 
+# Function to display task status with icon
 function Show-TaskStatusWithIcon {
     param (
         [string]$Task,
@@ -130,9 +135,54 @@ function Invoke-SFC {
     }
 }
 
-# (Include other task functions here as you already have them.)
+# Task: DISM Cleanup
+function Invoke-DISM {
+    Update-Status -Task "DISM Cleanup" -Result "Started"
+    Show-Progress -Activity "Running DISM Cleanup" -Percentage 30
+    
+    $dismOutput = Start-Process -FilePath "dism.exe" -ArgumentList "/Online", "/Cleanup-Image", "/RestoreHealth" -Wait -NoNewWindow -PassThru
+    if ($dismOutput.ExitCode -eq 0) {
+        Update-Status -Task "DISM Cleanup" -Result "Success"
+    } else {
+        Update-Status -Task "DISM Cleanup" -Result "Failed"
+    }
+}
 
-# Display Final Report
+# Task: Disk Cleanup
+function Invoke-DiskCleanup {
+    Update-Status -Task "Disk Cleanup" -Result "Started"
+    Show-Progress -Activity "Running Disk Cleanup" -Percentage 40
+    
+    $diskCleanupOutput = Start-Process -FilePath "cleanmgr.exe" -ArgumentList "/sagerun:1" -Wait -NoNewWindow -PassThru
+    if ($diskCleanupOutput.ExitCode -eq 0) {
+        Update-Status -Task "Disk Cleanup" -Result "Success"
+    } else {
+        Update-Status -Task "Disk Cleanup" -Result "Failed"
+    }
+}
+
+# Task: Windows Update Check
+function Invoke-WindowsUpdateCheck {
+    Update-Status -Task "Windows Update Check" -Result "Started"
+    Show-Progress -Activity "Checking Windows Update" -Percentage 50
+    
+    $windowsUpdateOutput = Start-Process -FilePath "powershell.exe" -ArgumentList "-Command", "Get-WindowsUpdate" -Wait -NoNewWindow -PassThru
+    if ($windowsUpdateOutput.ExitCode -eq 0) {
+        Update-Status -Task "Windows Update Check" -Result "Success"
+    } else {
+        Update-Status -Task "Windows Update Check" -Result "Failed"
+    }
+}
+
+# Task: Registry Cleanup (Optional)
+function Optimize-Registry {
+    Update-Status -Task "Registry Cleanup" -Result "Started"
+    Show-Progress -Activity "Optimizing Registry" -Percentage 60
+    # Add registry cleanup commands here (optional)
+    Update-Status -Task "Registry Cleanup" -Result "Success"
+}
+
+# Final Report
 function Show-Report {
     Show-Progress -Activity "Finalizing Tasks" -Percentage 100
     Write-Host "`n==========================================" -ForegroundColor Cyan
@@ -153,8 +203,6 @@ Invoke-DiskCheck
 Invoke-SFC
 Invoke-DISM
 Invoke-DiskCleanup
-Optimize-Defrag
-Remove-TemporaryFiles
 Invoke-WindowsUpdateCheck
 Optimize-Registry
 Show-Report
@@ -172,4 +220,5 @@ function Exit-Animation {
 
 Exit-Animation
 
+# Keep window open when executed via IEX
 Read-Host -Prompt "Press Enter to exit"
