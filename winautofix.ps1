@@ -148,8 +148,12 @@ function Invoke-DiskCleanup {
     Update-Status -Task "Disk Cleanup" -Result "Started"  # Set status to Started
     Show-Progress -Activity "Running Disk Cleanup" -Percentage 50
     
-    Start-Process -FilePath "cleanmgr.exe" -ArgumentList "/sagerun:1" -Wait -NoNewWindow
-    Update-Status -Task "Disk Cleanup" -Result "Success"
+    $cleanmgrOutput = Start-Process -FilePath "cleanmgr.exe" -ArgumentList "/sagerun:1" -Wait -NoNewWindow -PassThru
+    if ($cleanmgrOutput.ExitCode -eq 0) {
+        Update-Status -Task "Disk Cleanup" -Result "Success"
+    } else {
+        Update-Status -Task "Disk Cleanup" -Result "Failed"
+    }
 }
 
 # Task: Drive Optimization
@@ -199,6 +203,8 @@ function Show-Report {
     }
     Write-Host "==========================================" -ForegroundColor Cyan
     Invoke-Sound
+    Write-Host "Press any key to exit..." -ForegroundColor Yellow
+    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
 }
 
 # Run Tasks
