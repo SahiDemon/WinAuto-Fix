@@ -2,7 +2,7 @@
 
 ## Overview
 
-The **Windows Autofix Script v4.1** is a PowerShell-based utility designed to automate common system maintenance tasks on Windows operating systems. The script helps users optimize their system performance by running a series of diagnostic and cleanup tools. These tasks include disk checks, system file verification, disk cleanup, and registry optimization. The script is interactive, provides progress feedback, and displays task statuses with colorful indicators and emojis.
+The **Windows Autofix Script v4.1** is a PowerShell-based utility designed to automate common system maintenance tasks on Windows operating systems. The script helps users optimize their system performance by running a series of diagnostic and cleanup tools. These tasks include disk checks, system file verification, disk cleanup, and registry optimization.
 
 ### Features:
 - **Administrator Check**: Ensures the script is running with administrative privileges.
